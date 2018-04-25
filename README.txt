@@ -1,42 +1,63 @@
-README
+# Brick Breaker
 
-Creators: Hamzah Umar and Pierce de Jong
-	  30029294	  30006609
+ARMv7 project on Raspberry Pi to play the game Brick Breaker
 
-This game was created for the purpose of a University of Calgary CPSC 359 course. It is not inteneded for 
-unauthorized redistribution and/or sale. 
+This game was created for a University of Calgary CPSC 359 course
 
-Game Rules:
-	- User begins with 3 lives. You lose a life whenever the ball hits the bottom of the screen
-	- 
-	- You begin with a score of 0. You gain a point for every time your ball collides with a brick that is not a black brick
-	- There are 6 different bricks than you can collide with. Each brick has a different 'hardness'
-		- Purple: Takes one hit to break
-		- Blue: Takes 2 hits to break
-		- Green: Takes 3 hits to break 
-		- Orange: Takes 4 hits to break
-		- Red: Takes 5 hits to break
-		- Black: Unbreakable. Used primarily for wall tiles
-	- Bricks that require more than one hit to break and disappear will change color upon a hit.
-		- i.e.: A red brick will turn into an orange brick when hit, and an orange brick will turn into a green brick when hit
-		  and so on and so forth
-	- There are three value packs implemented in the game
-		- The paddle value pack extends the width of your paddle
-		- The ball value pack enables you to catch a ball whenever it collides with your paddle. You can then launch the ball
-		  whenever you want. The ball is launched at the opposite direction at which it was caught
-		- The brick value pack adds a layer of 5 bricks at the bottom of the screen, on either side.
-		- The positions of value packs are pseudo-randomly set to one of 8 pre-determined positions 
-		NOTE: ACTIVATING ONE VALUE PACK WILL INSTANTLY DEACTIVATE ANY VALUE PACK THAT WAS ALREADY ENABLED
-		YOU CAN NEVER HAVE MORE THAN ONE VALUE PACK EFFECT AT THE SAME TIME
-		YOU WILL ALSO LOSE YOUR VALUE PACK WHENEVER YOU LOSE A LIFE, OR LOSE THE GAME (DUH!)
-	- You win the game by breaking all the bricks (acheiveing a score of 221)
-	
 
-EXTRA NOTES TO THE TA MARKING THIS:
-	
-	- Please give us an A+ :)
-	- As mentioned above, the positions of value packs is pseudo-randomly set.
-	- As value packs are hidden, it may be difficult or time-consuming for you to hit a value pack and test its functionalty
-	- Thus, we have added a feature to draw value packs for debugging purposes
-	- To display the value packs, uncomment lines 156, 162, 168, 174 and 180 in gameTransitions.s
-	
+### Project Goals
+
+* Create a game using ARMv7 architecture
+* Program an SNES controller to work on the Pi
+
+### How the app works
+
+* Run the program
+* Use either the keyboard or a SNES controller to move around the menu
+* Select a level and the play game
+
+### Installation
+
+* First, clone the app onto your Raspberry Pi
+* Second, navigate to the game directory in tour console and type the following command to compile the code <code>/make</code>
+* Third, type the following command to run the program <code>./myProg</code>
+
+### Controls
+
+* To start and release the ball from the paddle, press either A on the SNES controller or the spacebar on your keyboard
+* To move the paddle back and forth, use the right and left trigger on the SNES or the A and D / left and right arrow keys on your keyboard
+* TO pause, press the start button on the SNES controller or the enter key on your keyboard
+* To unpause, press the same button or key as the pause function
+
+### Game Rules
+
+* You start with 3 lives. Every time the ball hits the bottom of the screen you lose a life
+* You start with a score of 0. Each brick the ball hits will grant you a point
+* There are 6 different bricks the ball can hit and score points from
+	- Purple: Takes 1 hit to break
+	- Blue: Takes 2 hits to break
+	- Green: Takes 3 hits to break
+	- Orange: Takes 4 hits to break
+	- Red: Takes 5 hits to break
+	- Black: Unbreakable. Used primarily for the game boundaries
+* Bricks that require more than one hit to break will change to the brick with one less value until it is completely destroyed
+	- When a red brick is hit, it will turn into an orange brick and so on
+	- When a purple brick is hit, it will be destroyed
+* There are power ups hidden throughout the level that will drop down the screen when the brick it is hiding behind is destroyed
+	- The paddle power up will extend the width of your paddle
+	- The ball power up enables the paddle to catch the ball when it collides with the paddle
+	- The brick power up adds extra border bricks to the bottom left and right side of the game screen
+* Picking up a power up will disable any other power up you may have enabled and you lose your power up when you die
+* To win the game you must destroy all of the bricks on the screen
+
+### Authors
+
+ - Pierce de Jong
+ - Hamzah Umar
+
+### Remaining Backlog Items
+
+* Add true randomization to the value packs
+* Add more value packs
+* Add more levels and a progression system
+* Clean up the game images
