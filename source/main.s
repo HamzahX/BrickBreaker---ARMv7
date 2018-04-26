@@ -370,5 +370,5 @@ exitGame:
 .section .data
 test:	.asciz	"Output = %d\n"
 
-num: 	.word 0
+num: 	.asciz ""
 fmtInput: .asciz "%d"
