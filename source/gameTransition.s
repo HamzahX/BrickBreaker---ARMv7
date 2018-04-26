@@ -153,31 +153,31 @@ updateBallState:
 	mov	r2, #0
 	ldr	r0, [r3]
 	ldr	r1, [r3, #8]
-//	bl	drawValuePack
+	//bl	drawValuePack
 
 	ldr	r3, =valueBallState
 	mov	r2, #1
 	ldr	r0, [r3]
 	ldr	r1, [r3, #8]
-//	bl	drawValuePack
+	//bl	drawValuePack
 
 	ldr	r3, =valuePaddleState2
 	mov	r2, #0
 	ldr	r0, [r3]
 	ldr	r1, [r3, #8]
-//	bl	drawValuePack
+	//bl	drawValuePack
 
 	ldr	r3, =valueBallState2
 	mov	r2, #1
 	ldr	r0, [r3]
 	ldr	r1, [r3, #8]
-//	bl	drawValuePack
+	//bl	drawValuePack
 
 	ldr	r3, =valueBrickState
 	mov	r2, #2
 	ldr	r0, [r3]
 	ldr	r1, [r3, #8]
-//	bl	drawValuePack
+	//bl	drawValuePack
 	
 	pop 	{lr}
 	mov	pc, lr
@@ -254,7 +254,8 @@ checkLeft:
 	cmp	r0, r1			// Check if the center of the ball has passed the point to hit at a 60 degree angle
 	bgt	checkMiddlePaddle	// Check if middle of ball has passed the left red part of the paddle
 	mov	angle, #45		// Hit left red area of paddle so bounce at 45
-	b	changeDirectionFromPaddle // in contact change the direction so the ball
+	mov	dir, #1
+	b	checkBallValuePack // in contact change the direction so the ball
 
 checkMiddlePaddle:
 	cmp	r2, #1			// Check if the paddle is extended
@@ -281,7 +282,8 @@ checkRight:
 	cmp	r0, r1			// Check if the left X coord of the ball is past the right bound of the paddle
 	bgt	endPaddleCollision	// If so stop collision detection
 	mov	angle, #45		// Hit right red area so bounce at 45
-	b	changeDirectionFromPaddle // Change the direction fo the ball
+	mov	dir, #0
+	b	checkBallValuePack // Change the direction fo the ball
 
 changeDirectionFromPaddle:
 	cmp	dir, #2			
@@ -1131,6 +1133,10 @@ checkValuePaddle:
 	ldr	valuePackY, [valuePack, #4]
 	ldr	valuePackYInital, [valuePack, #8]
 
+	ldr	r0, [valuePack, #12]		// Check if value pack has been used
+	cmp	r0, #1
+	beq	endCheckValuePack		// If pack has been used then stop the function
+
 	
 
 	mov	tileI, valuePackX
@@ -1216,10 +1222,6 @@ checkRedValue:		cmp	brick, #6
 
 // Move the value pack down one pixel and checkl for collision with out of bounds and paddle
 moveValuePack:
-
-	ldr	r0, [valuePack, #12]		// Check if value pack has been used
-	cmp	r0, #1
-	beq	endCheckValuePack		// If pack has been used then stop the function
 
 	cmp	valuePackY, #940		
 	beq	endCheckValuePack		// Check if the vlaue pack has hit bottom of the screen
@@ -1418,7 +1420,7 @@ replaceBottomBricks:
 // Stops the game when the score is 221
 .global incrementScore
 incrementScore:
-	push	{r4, r5, lr}
+	push	{r4-r7, lr}
 
 	mov	r0, #192		//set x position
 	mov	r1, #0			//set y position
@@ -1459,8 +1461,37 @@ checkScore:
 	ldr	r5, [r4]		//load the numerical score
 	add	r5, #1			//add 1 to it
 	str	r5, [r4]		//store it back to the array
+	
+	ldr	r6, =gameVersionState
+	ldr	r6, [r6]
+	
+	cmp	r6, #0
+	beq	level1Win
 
+	cmp	r6, #1
+	beq	level2Win
+	
+	b	level3Win
+level1Win:
+	cmp	r5, #162		//compare the score to 3 (score required to win) TODO: CHANGE FROM 3 TO CORRECT NUMBER
+	blt	ISReturn		//if <, branch to return
+	
+	ldr	r4, =winCondition	//else
+	mov	r5, #1			//
+	str	r5, [r4]		//set winCondition to 1 (true)
+
+	b	ISReturn
+level2Win:
 	cmp	r5, #221		//compare the score to 3 (score required to win) TODO: CHANGE FROM 3 TO CORRECT NUMBER
+	blt	ISReturn		//if <, branch to return
+	
+	ldr	r4, =winCondition	//else
+	mov	r5, #1			//
+	str	r5, [r4]		//set winCondition to 1 (true)
+	b	ISReturn
+level3Win:
+	ldr	r7, =#537
+	cmp	r5, r7			//compare the score to 3 (score required to win) TODO: CHANGE FROM 3 TO CORRECT NUMBER
 	blt	ISReturn		//if <, branch to return
 	
 	ldr	r4, =winCondition	//else
@@ -1468,7 +1499,7 @@ checkScore:
 	str	r5, [r4]		//set winCondition to 1 (true)
 
 ISReturn:
-	pop	{r4, r5, lr}
+	pop	{r4-r7, lr}
 	mov	pc, lr
 
 

@@ -2,28 +2,12 @@
 
 .global main
 main:
-	ldr r0, =fmtInput
-	ldr r1, =num
-	bl scanf
-	
-	ldr r0, =test
-	ldr r1, =num
-	ldr r1, [r1]
-	bl printf
-
-
 	@ ask for frame buffer information
 	ldr 	r0, =frameBufferInfo 	//frame buffer information structure
 	bl	initFbInfo		//initialize frame buffer info
 
-
-
 	bl	initialization		//initialize SNES lines
 menuBackground:
-
-
-
-
 	mov	r0, #0			//set the x co-ordinate
 	mov	r1, #0			//set the y co-ordinate
 	bl	drawMenu		//draw the menu background
@@ -34,6 +18,10 @@ menu1:
 	bl	drawNewGameSelected	//draw menu buttons (new game selected)
 
 menu1Loop:
+	ldr	r1, =buttonPressed
+	mov	r2, #0
+	str	r2, [r1]		//zero the button pressed global variable
+
 	bl	SNESInput2		//get controller input
 	ldr	r0, =buttonPressed	//
 	ldr	r0, [r0]		//load button pressed into r0
@@ -42,7 +30,7 @@ menu1Loop:
 	beq	menu2			//branch to other menu screen
 
 	cmp	r0, #9			//if user presses A
-	beq	resetGrid		//branch to resetGrid to start a new game
+	beq	levelSelectBackground	//branch to resetGrid to start a new game
 	
 	b	menu1Loop		//if user presses neither, ask for input again
 
@@ -52,6 +40,10 @@ menu2:
 	bl	drawQuitSelected	//draw menu buttons (quit selected)
 	
 menu2Loop:
+	ldr	r1, =buttonPressed
+	mov	r2, #0
+	str	r2, [r1]		//zero the button pressed global variable
+
 	bl	SNESInput2		//get controller input
 	ldr	r0, =buttonPressed	//
 	ldr	r0, [r0]		//load button pressed into r0
@@ -64,8 +56,116 @@ menu2Loop:
 
 	b	menu2Loop		//if user presses neither, ask for input again
 
-resetGrid:				//used to return a game grid to its initial state after the game is restarted
+levelSelectBackground:
+	mov	r0, #0			//set the x co-ordinate
+	mov	r1, #0			//set the y co-ordinate
+	bl	drawLevelSelectBackground //draw the level select background
+
+levelSelect1:		
+	mov	r0, #462		//set the x co-ordinate
+	mov	r1, #400		//set the y co-ordinate
+	bl	drawLevelMenu1		//draw level buttons (level 1 selected)
+
+	ldr	r0, =#250000
+	bl	delayMicroseconds	//delay for one second before restarting the game after a pause
+
+levelSelect1Loop:
+	ldr	r1, =buttonPressed
+	mov	r2, #0
+	str	r2, [r1]		//zero the button pressed global variable
+
+	mov	r0, #0
+	ldr	r1, =gameVersionState
+	str	r0, [r1]		//Set game level to 0 (level 1)
+
+	bl	SNESInput2		//get controller input
+	ldr	r0, =buttonPressed	//
+	ldr	r0, [r0]		//load button pressed into r0
+		
+	cmp	r0, #6			//if user presses down on d-pad
+	beq	levelSelect2		//branch to other menu screen
+
+	cmp	r0, #9			//if user presses A
+	beq	resetGrid		//branch to resetGrid to start a new game
+	b	levelSelect1Loop	//if user presses neither, ask for input again
+
+levelSelect2:
+	mov	r0, #462		//set the x co-ordinate
+	mov	r1, #400		//set the y co-ordinate
+	bl	drawLevelMenu2		//draw menu buttons (quit selected)
+
+	ldr	r0, =#250000
+	bl	delayMicroseconds	//delay for one second before restarting the game after a pause
+	
+levelSelect2Loop:
+	ldr	r1, =buttonPressed
+	mov	r2, #0
+	str	r2, [r1]		//zero the button pressed global variable
+
+	mov	r0, #1
+	ldr	r1, =gameVersionState
+	str	r0, [r1]		// Set game level to 1 (level 2)
+
+	bl	SNESInput2		//get controller input
+	ldr	r0, =buttonPressed	//
+	ldr	r0, [r0]		//load button pressed into r0
+	
+	cmp	r0, #5			//if user presses up on the d-pad
+	beq	levelSelect1		//branch to other menu screen
+
+	cmp	r0, #6			//if user presses down on d-pad
+	beq	levelSelect3		//branch to other menu screen
+		
+	cmp	r0, #9
+	beq	resetGrid		//if user presses A
+
+	b	levelSelect2Loop	//if user presses neither, ask for input again
+
+levelSelect3:
+	mov	r0, #462		//set the x co-ordinate
+	mov	r1, #400		//set the y co-ordinate
+	bl	drawLevelMenu3		//draw menu buttons (quit selected)
+
+	ldr	r0, =#250000
+	bl	delayMicroseconds	//delay for one second before restarting the game after a pause
+	
+levelSelect3Loop:
+	ldr	r1, =buttonPressed
+	mov	r2, #0
+	str	r2, [r1]		//zero the button pressed global variable
+
+	mov	r0, #2
+	ldr	r1, =gameVersionState
+	str	r0, [r1]		// Set game level to 2 (level 3)
+
+	bl	SNESInput2		//get controller input
+	ldr	r0, =buttonPressed	//
+	ldr	r0, [r0]		//load button pressed into r0
+	
+	cmp	r0, #5			//if user presses up on the d-pad
+	beq	levelSelect2		//branch to other menu screen
+		
+	cmp	r0, #9
+	beq	resetGrid		//if user presses A
+
+	b	levelSelect2Loop	//if user presses neither, ask for input again
+
+resetGrid:
+
+	ldr	r2, =gameVersionState
+	ldr	r2, [r2]
+	cmp	r2, #1
+	beq	game2			//used to return a game grid to its initial state after the game is restarted
+	cmp	r2, #2
+	beq	game3
 	ldr	r8, =newGrid		//load base address to new grid in r8
+	b	conResetGrid
+game2:
+	ldr	r8, =newGrid2
+	b	conResetGrid
+game3:
+	ldr	r8, =newGrid3
+conResetGrid:
 	ldr	r9, =gridState		//load base address to game grid in r9
 	
 	ldr	r1, [r8, r0]		//load entry from new grid
@@ -368,7 +468,6 @@ exitGame:
 	b	haltLoop$
 
 .section .data
-test:	.asciz	"Output = %d\n"
+test:
+.asciz	"%d"
 
-num: 	.asciz ""
-fmtInput: .asciz "%d"

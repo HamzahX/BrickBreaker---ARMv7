@@ -149,6 +149,26 @@ drawMenu:
 	pop	{lr}
 	mov	pc, lr
 
+.global drawLevelSelectBackground
+drawLevelSelectBackground:
+	push	{lr}
+ 
+	ldr	r2, =imageWidth		//
+	mov	r3, #1344		//
+	str	r3, [r2]		//change imageWidth global variable
+
+	ldr	r2, =imageHeight	//
+	mov	r3, #960		//
+	str	r3, [r2]		//change imageHeight global variable
+
+	ldr	r2, =levelBackground	//load address of main menu background image
+	
+	bl	drawImage		//call drawImage
+	
+	pop	{lr}
+	mov	pc, lr
+
+
 //Function which draws the game over screen
 //Takes 2 arguments:
 //	1) r0: x-coordinate of the game over image
@@ -388,6 +408,66 @@ drawNewGameSelected:
 
 	ldr	r2, =quit		//load address of menu button (quit unselected)
 	
+	bl	drawImage		//call draw image
+
+	pop	{lr}
+	mov	pc, lr
+
+.global drawLevelMenu1
+drawLevelMenu1:
+	
+	push	{lr}
+	
+	ldr	r2, =imageWidth		//
+	mov	r3, #420		//
+	str	r3, [r2]		//set image width
+
+	ldr	r2, =imageHeight	//
+	mov	r3, #450		//
+	str	r3, [r2]		//set image height
+	
+	ldr	r2, =level1		//load address of menu button (new game selected)
+
+	bl	drawImage		//call draw image
+
+	pop	{lr}
+	mov	pc, lr
+
+.global drawLevelMenu2
+drawLevelMenu2:
+	
+	push	{lr}
+
+	ldr	r2, =imageWidth		//
+	mov	r3, #420		//
+	str	r3, [r2]		//set image width
+
+	ldr	r2, =imageHeight	//
+	mov	r3, #450		//
+	str	r3, [r2]		//set image height
+	
+	ldr	r2, =level2		//load address of menu button (new game selected)
+
+	bl	drawImage		//call draw image
+
+	pop	{lr}
+	mov	pc, lr
+
+.global drawLevelMenu3
+drawLevelMenu3:
+	
+	push	{lr}
+
+	ldr	r2, =imageWidth		//
+	mov	r3, #420		//
+	str	r3, [r2]		//set image width
+
+	ldr	r2, =imageHeight	//
+	mov	r3, #450		//
+	str	r3, [r2]		//set image height
+	
+	ldr	r2, =level3		//load address of menu button (new game selected)
+
 	bl	drawImage		//call draw image
 
 	pop	{lr}
