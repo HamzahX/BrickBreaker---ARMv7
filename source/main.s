@@ -2,12 +2,28 @@
 
 .global main
 main:
+	ldr r0, =fmtInput
+	ldr r1, =num
+	bl scanf
+	
+	ldr r0, =test
+	ldr r1, =num
+	ldr r1, [r1]
+	bl printf
+
+
 	@ ask for frame buffer information
 	ldr 	r0, =frameBufferInfo 	//frame buffer information structure
 	bl	initFbInfo		//initialize frame buffer info
 
+
+
 	bl	initialization		//initialize SNES lines
 menuBackground:
+
+
+
+
 	mov	r0, #0			//set the x co-ordinate
 	mov	r1, #0			//set the y co-ordinate
 	bl	drawMenu		//draw the menu background
@@ -352,6 +368,7 @@ exitGame:
 	b	haltLoop$
 
 .section .data
-test:
-.asciz	"%d"
+test:	.asciz	"Output = %d\n"
 
+num: 	.word 0
+fmtInput: .asciz "%d"
