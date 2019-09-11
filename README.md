@@ -52,8 +52,8 @@ This game was created for a University of Calgary CPSC 359 course
 
 ### Authors
 
- - Pierce de Jong
- - Hamzah Umar
+ - Pierce
+ - Hamzah
 
 ### Remaining Backlog Items
 
